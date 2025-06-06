@@ -24,23 +24,18 @@ qt5-quickcontrols2                                     # for sddm theme ui eleme
 qt5-graphicaleffects                                   # for sddm theme effects
 
 # --------------------------------------------------- // Window Manager
-hyprland                                               # wlroots-based wayland compositor
 dunst                                                  # notification daemon
 rofi-wayland                                           # application launcher
 waybar                                                 # system bar
 swww                                                   # wallpaper
-hyprlock                                               # lock screen
 wlogout                                                # logout menu
 grim                                                   # screenshot tool
-hyprpicker                                             # color picker
 slurp                                                  # region select for screenshot/screenshare
 satty                                                  # Modern Screenshot Annotation
 cliphist                                               # clipboard manager
-hyprsunset                                             # blue light filter
 
 # --------------------------------------------------- // Dependencies
 polkit-gnome                                           # authentication agent
-xdg-desktop-portal-hyprland                            # xdg desktop portal for hyprland
 xdg-desktop-portal-gtk                                 # file picker and dbus  integration
 xdg-user-dirs                                          # Manage user directories like ~/Desktop and ~/Music
 pacman-contrib                                         # for system update check
@@ -63,7 +58,7 @@ qt5-wayland                                            # wayland support in qt5
 qt6-wayland                                            # wayland support in qt6
 
 # --------------------------------------------------- // Applications
-firefox                                                # browser
+zen-browser-bin                                        # browser
 kitty                                                  # terminal
 dolphin                                                # kde file manager
 ark                                                    # kde file archiver
@@ -85,4 +80,71 @@ duf|fish                                               # prettier version of df 
 fastfetch                                              # system information fetch tool
 
 # --------------------------------------------------- // HyDE
-hypridle                                               # idle daemon
+hypridle-git                                           # idle daemon
+aquamarine-git
+hyprcursor-git
+hyprgraphics-git
+hypridle-git
+hyprland-git
+hyprland-qt-support-git
+hyprland-qtutils-git
+hyprlang-git
+hyprlock-git
+hyprpicker-git
+hyprsunset-git
+hyprutils-git
+hyprwayland-scanner-git
+xdg-desktop-portal-hyprland-git
+tesseract-data-eng
+zed
+xorg-xeyes
+sshs
+btop
+konsole
+fuse-overlayfs
+vesktop-bin
+webstorm
+webstorm-jre
+zed-editor
+tableplus
+pcsx2
+openrgb-git
+openrgb-plugin-scheduler-git
+openrgb-plugin-effects-git
+teams-for-linux
+rsync
+rclone
+postman-bin
+neovim
+vlc
+mpv
+betterbird-bin
+heroic-games-launcher-bin
+protontricks
+winetricks
+steam
+docker
+docker-compose
+docker-buildx
+qbittorrent-nox-git
+lazydocker
+docker-rootless-extras
+gitkraken
+spotify
+spicetify-cli
+ungoogled-chromium-bin  
+visual-studio-code-bin 
+cmake
+meson
+cpio
+pkg-config
+git
+g++
+gcc
+protonhax-git
+gedit
+pnpm
+cava
+bind
+wl-screenrec
+uwsm
