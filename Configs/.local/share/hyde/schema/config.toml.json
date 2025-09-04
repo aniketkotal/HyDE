@@ -97,6 +97,16 @@
                             "default": 10,
                             "description": "Scaling for glyph picker.",
                             "type": "integer"
+                        },
+                        "args": {
+                            "default": [
+                                "-multi-select"
+                            ],
+                            "description": "Additional arguments for glyph picker.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
@@ -108,6 +118,58 @@
                             "default": 5,
                             "description": "Scaling for launch.",
                             "type": "integer"
+                        },
+                        "drun_args": {
+                            "default": [],
+                            "description": "Additional arguments for drun mode.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "run_args": {
+                            "default": [],
+                            "description": "Additional arguments for run mode.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "window_args": {
+                            "default": [],
+                            "description": "Additional arguments for window mode.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "filebrowser_args": {
+                            "default": [],
+                            "description": "Additional arguments for filebrowser mode.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "drun_style": {
+                            "default": "style_1",
+                            "description": "Style for drun mode.",
+                            "type": "string"
+                        },
+                        "window_style": {
+                            "default": "style_1",
+                            "description": "Style for window mode.",
+                            "type": "string"
+                        },
+                        "run_style": {
+                            "default": "style_1",
+                            "description": "Style for run mode.",
+                            "type": "string"
+                        },
+                        "filebrowser_style": {
+                            "default": "style_1",
+                            "description": "Style for filebrowser mode.",
+                            "type": "string"
                         }
                     }
                 },
@@ -150,6 +212,16 @@
                             "default": 10,
                             "description": "Scaling for emoji picker.",
                             "type": "integer"
+                        },
+                        "args": {
+                            "default": [
+                                "-multi-select"
+                            ],
+                            "description": "Additional arguments for emoji picker.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
@@ -161,6 +233,64 @@
                             "default": 6,
                             "description": "Scaling for theme selector.",
                             "type": "integer"
+                        }
+                    }
+                },
+                "websearch": {
+                    "description": "hyde-shell rofi.websearch.sh configuration.",
+                    "type": "object",
+                    "properties": {
+                        "style": {
+                            "default": "",
+                            "description": "Style for rofi websearch.",
+                            "type": "string"
+                        },
+                        "args": {
+                            "default": [],
+                            "description": "Additional arguments for websearch.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "scale": {
+                            "default": 10,
+                            "description": "Scaling for websearch.",
+                            "type": "integer"
+                        },
+                        "font": {
+                            "default": "JetBrainsMono Nerd Font",
+                            "description": "Font for websearch.",
+                            "type": "string"
+                        }
+                    }
+                },
+                "bookmarks": {
+                    "description": "hyde-shell rofi.bookmarks.sh configuration.",
+                    "type": "object",
+                    "properties": {
+                        "style": {
+                            "default": "",
+                            "description": "Style for rofi bookmarks.",
+                            "type": "string"
+                        },
+                        "args": {
+                            "default": [],
+                            "description": "Additional arguments for bookmarks.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "scale": {
+                            "default": 10,
+                            "description": "Scaling for bookmarks.",
+                            "type": "integer"
+                        },
+                        "font": {
+                            "default": "JetBrainsMono Nerd Font",
+                            "description": "Font for bookmarks.",
+                            "type": "string"
                         }
                     }
                 }
@@ -377,9 +507,25 @@
                     "type": "string"
                 },
                 "scale": {
-                    "default": 30,
+                    "default": 10,
                     "description": "Total scaling for waybar.",
                     "type": "integer"
+                },
+                "icon_size": {
+                    "default": 10,
+                    "description": "Icon size for waybar.",
+                    "type": "integer"
+                },
+                "position": {
+                    "default": "top",
+                    "description": "A fallback position of the waybar.  ",
+                    "options": [
+                        "top",
+                        "bottom",
+                        "left",
+                        "right"
+                    ],
+                    "type": "string"
                 }
             }
         },
@@ -433,11 +579,6 @@
             "description": "'cava.sh stdout' configuration.",
             "type": "object",
             "properties": {
-                "max_instances": {
-                    "default": 1,
-                    "description": "Maximum number of cava instances.",
-                    "type": "integer"
-                },
                 "bar": {
                     "default": "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588",
                     "description": "Bar characters for cava.",
@@ -457,6 +598,19 @@
                     "default": "\ud83c\udfb6",
                     "description": "Standby character for cava.",
                     "type": "string"
+                },
+                "bar_array": {
+                    "default": [
+                        "\u2591",
+                        "\u2592",
+                        "\u2593",
+                        "\u2588"
+                    ],
+                    "description": "Bar array for stdout preset.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -464,11 +618,6 @@
             "description": "'cava.sh hyprlock' configuration.",
             "type": "object",
             "properties": {
-                "max_instances": {
-                    "default": 1,
-                    "description": "Maximum number of cava instances.",
-                    "type": "integer"
-                },
                 "bar": {
                     "default": "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588",
                     "description": "Bar characters for cava.",
@@ -488,6 +637,23 @@
                     "default": "\ud83c\udfb6",
                     "description": "Standby character for cava.",
                     "type": "string"
+                },
+                "bar_array": {
+                    "default": [
+                        "\u2581",
+                        "\u2582",
+                        "\u2583",
+                        "\u2584",
+                        "\u2585",
+                        "\u2586",
+                        "\u2587",
+                        "\u2588"
+                    ],
+                    "description": "Bar array for hyprlock preset.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -495,11 +661,6 @@
             "description": "'cava.sh waybar' configuration.",
             "type": "object",
             "properties": {
-                "max_instances": {
-                    "default": 1,
-                    "description": "Maximum number of cava instances.",
-                    "type": "integer"
-                },
                 "bar": {
                     "default": "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588",
                     "description": "Bar characters for cava.",
@@ -518,6 +679,52 @@
                 "standby": {
                     "default": "\ud83c\udfb6",
                     "description": "Standby character for cava.",
+                    "type": "string"
+                },
+                "bar_array": {
+                    "default": [
+                        "\u25dc",
+                        "\u25dd",
+                        "\u25de",
+                        "\u25df",
+                        "\u25e0",
+                        "\u25e1",
+                        "\u25e2",
+                        "\u25e3"
+                    ],
+                    "description": "Bar array for waybar preset.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "cava": {
+            "description": "Cava visualizer configuration.",
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "default": "stereo",
+                    "description": "Audio channels: stereo or mono.",
+                    "options": [
+                        "stereo",
+                        "mono"
+                    ],
+                    "type": "string"
+                },
+                "reverse": {
+                    "default": 1,
+                    "description": "Reverse spectrum movement (0 or 1).",
+                    "options": [
+                        0,
+                        1
+                    ],
+                    "type": "integer"
+                },
+                "range": {
+                    "default": "8",
+                    "description": "Bar sensitivity",
                     "type": "string"
                 }
             }
@@ -651,6 +858,11 @@
                     "description": "Terminal.",
                     "type": "string"
                 },
+                "quickapps": {
+                    "default": "kitty",
+                    "description": "Quick apps.",
+                    "type": "string"
+                },
                 "bar": {
                     "default": "waybar",
                     "description": "Bar.",
@@ -679,6 +891,11 @@
                 "cursor_theme": {
                     "default": "McMojave",
                     "description": "Cursor theme.",
+                    "type": "string"
+                },
+                "button_layout": {
+                    "default": "",
+                    "description": "Button layout. (gtk only)",
                     "type": "string"
                 },
                 "document_font_size": {
@@ -715,6 +932,11 @@
                     "default": 9,
                     "description": "Monospace font size.",
                     "type": "integer"
+                },
+                "background_path": {
+                    "default": "",
+                    "description": "LockScreen's Background path.",
+                    "type": "string"
                 }
             }
         },
@@ -733,7 +955,7 @@
                     "type": "string"
                 },
                 "bar": {
-                    "default": "$BAR",
+                    "default": "hyde-shell waybar --watch",
                     "description": "Bar.",
                     "type": "string"
                 },
@@ -816,6 +1038,11 @@
                 "standby_text": {
                     "default": "\uf001  Music",
                     "description": "To display on standby.",
+                    "type": "string"
+                },
+                "artist_track_separator": {
+                    "default": "\u2004\uf444 ",
+                    "description": "Separator symbols to display between artist and track.",
                     "type": "string"
                 }
             }

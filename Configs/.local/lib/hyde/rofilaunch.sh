@@ -2,12 +2,16 @@
 
 #// set variables
 
-scrDir="$(dirname "$(realpath "$0")")"
-confDir="${confDir}/config"
-# shellcheck source=/dev/null
-. "${scrDir}/globalcontrol.sh"
-rofiStyle="${rofiStyle:-1}"
+pkill rofi && exit 0
 
+if [[ "${HYDE_SHELL_INIT}" -ne 1 ]]; then
+    eval "$(hyde-shell init)"
+else
+    export_hyde_config
+fi
+
+# This block is some legacy sh*t. So if someone agrees to remove it, please do so via a PR.
+rofiStyle="${rofiStyle:-1}"
 if [[ "${rofiStyle}" =~ ^[0-9]+$ ]]; then
     rofi_config="style_${rofiStyle:-1}"
 else
@@ -29,20 +33,24 @@ case "${1}" in
 d | --drun)
     r_mode="drun"
     rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
-    rofi_args+=("--run-command" "sh -c 'uwsm app -- {cmd} || {cmd}'")
+    rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
+    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
     ;;
 w | --window)
     r_mode="window"
     rofi_config="${ROFI_LAUNCH_WINDOW_STYLE:-$rofi_config}"
+    rofi_args+=("${ROFI_LAUNCH_WINDOW_ARGS[@]:-}")
     ;;
 f | --filebrowser)
     r_mode="filebrowser"
     rofi_config="${ROFI_LAUNCH_FILEBROWSER_STYLE:-$rofi_config}"
+    rofi_args+=("${ROFI_LAUNCH_FILEBROWSER_ARGS[@]:-}")
     ;;
 r | --run)
     r_mode="run"
     rofi_config="${ROFI_LAUNCH_RUN_STYLE:-$rofi_config}"
-    rofi_args+=("--run-command" "sh -c 'uwsm app -- {cmd} || {cmd}'")
+    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
+    rofi_args+=("${ROFI_LAUNCH_RUN_ARGS[@]:-}")
     ;;
 h | --help)
     echo -e "$(basename "${0}") [action]"
@@ -55,6 +63,8 @@ h | --help)
 *)
     r_mode="drun"
     ROFI_LAUNCH_DRUN_STYLE="${ROFI_LAUNCH_DRUN_STYLE:-$ROFI_LAUNCH_STYLE}"
+    rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
+    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
     rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
     ;;
 esac
@@ -101,6 +111,7 @@ rofi_args+=(
 #// launch rofi
 rofi -show "${r_mode}" "${rofi_args[@]}" &
 disown
+echo -show "${r_mode}" "${rofi_args[@]}"
 
 #// Set full screen state
 #TODO Contributor notes:

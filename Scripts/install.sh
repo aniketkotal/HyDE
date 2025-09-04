@@ -40,7 +40,7 @@ flg_Shell=0
 flg_Nvidia=1
 flg_ThemeInstall=1
 
-while getopts idrstmnh: RunStep; do
+while getopts idrstmnh RunStep; do
     case $RunStep in
     i) flg_Install=1 ;;
     d)
@@ -56,7 +56,7 @@ while getopts idrstmnh: RunStep; do
         ;;
     h)
         # shellcheck disable=SC2034
-        export flg_Shell=0
+        export flg_Shell=1
         print_log -r "[shell] " -b "Reevaluate :: " "shell options"
         ;;
     t) flg_DryRun=1 ;;
@@ -68,10 +68,18 @@ Usage: $0 [options]
             d : install hyprland [d]efaults without configs --noconfirm
             r : [r]estore config files
             s : enable system [s]ervices
-            n : ignore/[n]o [n]vidia actions
+            n : ignore/[n]o [n]vidia actions (-irsn to ignore nvidia)
             h : re-evaluate S[h]ell
             m : no the[m]e reinstallations
             t : [t]est run without executing (-irst to dry run all)
+
+NOTE:
+        running without args is equivalent to -irs
+        to ignore nvidia, run -irsn
+
+WRONG:
+        install.sh -n # This will not work
+
 EOF
         exit 1
         ;;
@@ -128,10 +136,11 @@ EOF
     cp "${scrDir}/pkg_core.lst" "${scrDir}/install_pkg.lst"
     trap 'mv "${scrDir}/install_pkg.lst" "${cacheDir}/logs/${HYDE_LOG}/install_pkg.lst"' EXIT
 
+    echo -e "\n#user packages" >>"${scrDir}/install_pkg.lst" # Add a marker for user packages
     if [ -f "${custom_pkg}" ] && [ -n "${custom_pkg}" ]; then
         cat "${custom_pkg}" >>"${scrDir}/install_pkg.lst"
     fi
-    echo -e "\n#user packages" >>"${scrDir}/install_pkg.lst" # Add a marker for user packages
+
     #--------------------------------#
     # add nvidia drivers to the list #
     #--------------------------------#
@@ -142,7 +151,7 @@ EOF
             done
             nvidia_detect --drivers >>"${scrDir}/install_pkg.lst"
         else
-            print_log -warn "Nvidia" " :: " "Nvidia GPU detected but ignored..."
+            print_log -warn "Nvidia" "Nvidia GPU detected but ignored..."
         fi
     fi
     nvidia_detect --verbose
@@ -219,7 +228,7 @@ EOF
     #--------------------------------#
     # install packages from the list #
     #--------------------------------#
-    [ ${flg_DryRun} -eq 1 ] || "${scrDir}/install_pkg.sh" "${scrDir}/install_pkg.lst"
+    "${scrDir}/install_pkg.sh" "${scrDir}/install_pkg.lst"
 fi
 
 #---------------------------#
@@ -228,7 +237,7 @@ fi
 if [ ${flg_Restore} -eq 1 ]; then
     cat <<"EOF"
 
-             _           _d
+             _           _
  ___ ___ ___| |_ ___ ___|_|___ ___
 |  _| -_|_ -|  _| . |  _| |   | . |
 |_| |___|___|_| |___|_| |_|_|_|_  |
@@ -245,8 +254,10 @@ EOF
     "${scrDir}/restore_thm.sh"
     print_log -g "[generate] " "cache ::" "Wallpapers..."
     if [ "${flg_DryRun}" -ne 1 ]; then
+        export PATH="$HOME/.local/lib/hyde:$HOME/.local/bin:${PATH}"
         "$HOME/.local/lib/hyde/swwwallcache.sh" -t ""
         "$HOME/.local/lib/hyde/theme.switch.sh" -q || true
+        "$HOME/.local/lib/hyde/waybar.py" --update || true
         echo "[install] reload :: Hyprland"
     fi
 
@@ -269,6 +280,34 @@ EOF
     "${scrDir}/install_pst.sh"
 fi
 
+
+#---------------------------#
+# run migrations            #
+#---------------------------#
+if [ ${flg_Restore} -eq 1 ]; then
+
+# migrationDir="$(realpath "$(dirname "$(realpath "$0")")/../migrations")"
+migrationDir="${scrDir}/migrations"
+
+if [ ! -d "${migrationDir}" ]; then
+    print_log -warn "Migrations" "Directory not found: ${migrationDir}"
+fi
+
+echo "Running migrations from: ${migrationDir}"
+
+if [ -d "${migrationDir}" ] && find "${migrationDir}" -type f | grep -q .; then
+    migrationFile=$(find "${migrationDir}" -maxdepth 1 -type f -printf '%f\n' | sort -r | head -n 1)
+
+    if [[ -n "${migrationFile}" && -f "${migrationDir}/${migrationFile}" ]]; then
+        echo "Found migration file: ${migrationFile}"
+        sh "${migrationDir}/${migrationFile}"
+    else
+        echo "No migration file found in ${migrationDir}. Skipping migrations."
+    fi
+fi
+
+fi
+
 #------------------------#
 # enable system services #
 #------------------------#
@@ -282,28 +321,24 @@ if [ ${flg_Service} -eq 1 ]; then
 
 EOF
 
-    while read -r serviceChk; do
-
-        if [[ $(systemctl list-units --all -t service --full --no-legend "${serviceChk}.service" | sed 's/^\s*//g' | cut -f1 -d' ') == "${serviceChk}.service" ]]; then
-            print_log -y "[skip] " -b "active " "Service ${serviceChk}"
-        else
-            print_log -y "start" "Service ${serviceChk}"
-            if [ $flg_DryRun -ne 1 ]; then
-                sudo systemctl enable "${serviceChk}.service"
-                sudo systemctl start "${serviceChk}.service"
-            fi
-        fi
-
-    done <"${scrDir}/system_ctl.lst"
+    "${scrDir}/restore_svc.sh"
 fi
 
 if [ $flg_Install -eq 1 ]; then
-    print_log -stat "\nInstallation" "completed"
+    echo ""
+    print_log -g "Installation" " :: " "COMPLETED!"
 fi
-print_log -stat "Log" "View logs at ${cacheDir}/logs/${HYDE_LOG}"
+print_log -b "Log" " :: " -y "View logs at ${cacheDir}/logs/${HYDE_LOG}"
 if [ $flg_Install -eq 1 ] ||
     [ $flg_Restore -eq 1 ] ||
-    [ $flg_Service -eq 1 ]; then
+    [ $flg_Service -eq 1 ] &&
+    [ $flg_DryRun -ne 1 ]; then
+
+    if [[ -z "${HYPRLAND_CONFIG:-}" ]] || [[ ! -f "${HYPRLAND_CONFIG}" ]]; then
+        print_log -warn "Hyprland config not found! Might be a new install or upgrade."
+        print_log -warn "Please reboot the system to apply new changes."
+    fi
+
     print_log -stat "HyDE" "It is not recommended to use newly installed or upgraded HyDE without rebooting the system. Do you want to reboot the system? (y/N)"
     read -r answer
 
